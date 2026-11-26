@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Lab6.MainPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="#0F172A">
+
+    <Grid>
+        <!-- Основний ігровий контейнер -->
+        <Grid RowDefinitions="Auto, *, Auto"
+              Padding="10,14,10,12">
+
+            <!-- 1. Верхня панель: Нова гра | СЛІВЦЕ | Правила -->
+            <Grid Grid.Row="0"
+                  ColumnDefinitions="48, *, 48"
+                  Padding="6,0,6,8">
+
+                <Button Grid.Column="0"
+                        Text="↻"
+                        FontSize="22"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        BackgroundColor="#334155"
+                        CornerRadius="10"
+                        Padding="0"
+                        WidthRequest="48"
+                        HeightRequest="48"
+                        Clicked="OnRestartClicked" />
+
+                <Label Grid.Column="1"
+                       Text="СЛІВЦЕ"
+                       FontSize="26"
+                       FontAttributes="Bold"
+                       CharacterSpacing="3"
+                       TextColor="#F8FAFC"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+
+                <Button Grid.Column="2"
+                        Text="?"
+                        FontSize="20"
+                        FontAttributes="Bold"
+                        TextColor="White"
+                        BackgroundColor="#334155"
+                        CornerRadius="24"
+                        Padding="0"
+                        WidthRequest="48"
+                        HeightRequest="48"
+                        Clicked="OnHelpClicked" />
+            </Grid>
+
+            <!-- 2. Ігрове поле 6x5 -->
+            <VerticalStackLayout x:Name="BoardContainer"
+                                 Grid.Row="1"
+                                 Spacing="8"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center" />
+
+            <!-- 3. Екранна клавіатура -->
+            <VerticalStackLayout x:Name="KeyboardContainer"
+                                 Grid.Row="2"
+                                 Spacing="6"
+                                 Padding="0,4,0,0" />
+        </Grid>
+
+        <!-- Спливаючий Toast-банер помилки зверху -->
+        <Border x:Name="ToastBanner"
+                IsVisible="False"
+                BackgroundColor="#334155"
+                Stroke="#475569"
+                StrokeThickness="1.5"
+                StrokeShape="RoundRectangle 10"
+                Padding="18,10"
+                Margin="0,72,0,0"
+                HorizontalOptions="Center"
+                VerticalOptions="Start">
+            <Label x:Name="ToastLabel"
+                   TextColor="#F8FAFC"
+                   FontSize="15"
+                   FontAttributes="Bold" />
+        </Border>
+
+        <!-- Модальне вікно правил гри -->
+        <Grid x:Name="RulesOverlay"
+              IsVisible="False"
+              BackgroundColor="#B3000000"
+              Padding="24">
+            <Border BackgroundColor="#1E293B"
+                    Stroke="#334155"
+                    StrokeThickness="2"
+                    StrokeShape="RoundRectangle 20"
+                    Padding="24"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Fill">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Правила гри"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="#F8FAFC"
+                           HorizontalOptions="Center" />
+
+                    <Label Text="Вгадайте слово з 5 літер за 6 спроб."
+                           FontSize="15"
+                           TextColor="#CBD5E1"
+                           HorizontalOptions="Center" />
+
+                    <!-- Приклад: Зелений -->
+                    <Grid ColumnDefinitions="42, *" ColumnSpacing="14">
+                        <Border BackgroundColor="#10B981"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 8"
+                                WidthRequest="42"
+                                HeightRequest="42">
+                            <Label Text="А"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1"
+                               Text="Літера є в слові і стоїть на своєму місці"
+                               FontSize="14"
+                               TextColor="#E2E8F0"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Приклад: Жовтий -->
+                    <Grid ColumnDefinitions="42, *" ColumnSpacing="14">
+                        <Border BackgroundColor="#F59E0B"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 8"
+                                WidthRequest="42"
+                                HeightRequest="42">
+                            <Label Text="Б"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1"
+                               Text="Літера є в слові, але на іншому місці"
+                               FontSize="14"
+                               TextColor="#E2E8F0"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Приклад: Сірий -->
+                    <Grid ColumnDefinitions="42, *" ColumnSpacing="14">
+                        <Border BackgroundColor="#475569"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 8"
+                                WidthRequest="42"
+                                HeightRequest="42">
+                            <Label Text="В"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   TextColor="White"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center" />
+                        </Border>
+                        <Label Grid.Column="1"
+                               Text="Такої літери в загаданому слові немає"
+                               FontSize="14"
+                               TextColor="#E2E8F0"
+                               VerticalOptions="Center" />
+                    </Grid>
+
+                    <Button Text="Зрозуміло"
+                            BackgroundColor="#10B981"
+                            TextColor="White"
+                            FontSize="15"
+                            FontAttributes="Bold"
+                            CornerRadius="12"
+                            HeightRequest="46"
+                            Margin="0,6,0,0"
+                            Clicked="OnCloseRulesClicked" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Модальне вікно завершення гри (Перемога / Поразка) -->
+        <Grid x:Name="EndGameOverlay"
+              IsVisible="False"
+              BackgroundColor="#B3000000"
+              Padding="24">
+            <Border BackgroundColor="#1E293B"
+                    Stroke="#334155"
+                    StrokeThickness="2"
+                    StrokeShape="RoundRectangle 20"
+                    Padding="24"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Fill">
+                <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                    <Label x:Name="EndTitleLabel"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="#F8FAFC"
+                           HorizontalOptions="Center" />
+
+                    <Label x:Name="EndSubtitleLabel"
+                           FontSize="15"
+                           TextColor="#CBD5E1"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center" />
+
+                    <Border x:Name="TargetWordBadge"
+                            BackgroundColor="#0F172A"
+                            Stroke="#10B981"
+                            StrokeThickness="2"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="24,12"
+                            Margin="0,4,0,8"
+                            HorizontalOptions="Center">
+                        <Label x:Name="TargetWordLabel"
+                               FontSize="26"
+                               FontAttributes="Bold"
+                               CharacterSpacing="4"
+                               TextColor="#F8FAFC"
+                               HorizontalOptions="Center" />
+                    </Border>
+
+                    <Grid ColumnDefinitions="*, *" ColumnSpacing="14" HorizontalOptions="Fill">
+                        <Button Grid.Column="0"
+                                Text="Закрити"
+                                BackgroundColor="#334155"
+                                TextColor="#CBD5E1"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                CornerRadius="12"
+                                HeightRequest="46"
+                                Clicked="OnCloseEndGameClicked" />
+
+                        <Button Grid.Column="1"
+                                Text="Нова гра"
+                                BackgroundColor="#10B981"
+                                TextColor="White"
+                                FontSize="15"
+                                FontAttributes="Bold"
+                                CornerRadius="12"
+                                HeightRequest="46"
+                                Clicked="OnPlayAgainClicked" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </Grid>
+</ContentPage>

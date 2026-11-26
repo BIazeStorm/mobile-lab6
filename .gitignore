@@ -1,0 +1,27 @@
+# Build outputs
+bin/
+obj/
+
+# User-specific files
+.vs/
+*.user
+*.suo
+
+# OS-generated files
+.DS_Store
+
+# .NET build artifacts
+*.userosscache
+*.sln.docstates
+
+# Android / Mobile artifacts
+*.apk
+*.aab
+*.keystore
+
+# JetBrains Rider
+.idea/
+*.DotSettings.user
+
+# OS
+Thumbs.db
